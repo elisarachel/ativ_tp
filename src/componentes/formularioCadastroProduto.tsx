@@ -32,19 +32,14 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        // Check if all required fields are filled
         const { nome, descricao, preco } = formData;
         if (!nome || !descricao || preco <= 0) {
-            // If any of the required fields are empty or preço is less than or equal to 0,
-            // display an error message and prevent form submission
             alert("Todos os campos são obrigatórios e o preço deve ser maior que 0.");
             return;
         }
 
-        // All required fields are filled, proceed with form submission
         onCadastroProduto(formData);
 
-        // Reset form data
         setFormData({
             nome: "",
             descricao: "",
@@ -53,11 +48,10 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
     };
 
     const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // Ensure that only numbers are allowed in the price field
         const value = event.target.value.replace(/\D/g, '');
         setFormData((prevData) => ({
             ...prevData,
-            preco: parseInt(value) || 0, // Convert value to integer or default to 0 if not a valid number
+            preco: parseInt(value) || 0,
         }));
     };
 
@@ -78,7 +72,7 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
                                 name="nome"
                                 value={formData.nome}
                                 onChange={handleInputChange}
-                                required // Make field required
+                                required 
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -92,7 +86,7 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
                                 onChange={handleInputChange}
                                 multiline
                                 rows={4}
-                                required // Make field required
+                                required 
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -102,10 +96,10 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
                                 label="Preço"
                                 variant="outlined"
                                 name="preco"
-                                type="text" // Change type to "text" to allow for custom input validation
+                                type="text" 
                                 value={formData.preco}
-                                onChange={handlePriceChange} // Use custom handler for price change
-                                required // Make field required
+                                onChange={handlePriceChange} 
+                                required 
                             />
                         </Grid>
                     </Grid>

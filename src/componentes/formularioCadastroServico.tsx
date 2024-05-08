@@ -29,9 +29,25 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
         }));
     };
 
+	const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value.replace(/\D/g, '');
+        setFormData((prevData) => ({
+            ...prevData,
+            preco: parseInt(value) || 0, 
+        }));
+    };
+
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        const { nome, descricao, preco } = formData;
+        if (!nome || !descricao || preco <= 0) {
+            alert("Todos os campos são obrigatórios e o preço deve ser maior que 0.");
+            return;
+        }
+
         onCadastroServico(formData);
+
         setFormData({
             nome: "",
             descricao: "",
@@ -56,6 +72,7 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
                                 name="nome"
                                 value={formData.nome}
                                 onChange={handleInputChange}
+								required
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -69,6 +86,7 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
                                 onChange={handleInputChange}
                                 multiline
                                 rows={4}
+								required
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -80,7 +98,8 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
                                 name="preco"
                                 type="number"
                                 value={formData.preco}
-                                onChange={handleInputChange}
+                                onChange={handlePriceChange}
+								required
                             />
                         </Grid>
                     </Grid>
