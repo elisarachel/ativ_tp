@@ -28,17 +28,17 @@ export default function BarraNavegacao(props: Props) {
         setDrawerOpen(!drawerOpen);
     };
 
-	const handleListItemClick = (nome: string, link?: string, isDropdown?: boolean) => {
-		seletorView(nome);
-		if (!isDropdown) {
-			setDrawerOpen(false);
-		}
-		if (link) {
-			navigate(link);
-		}
-	};
+    const handleListItemClick = (nome: string, link?: string, isDropdown?: boolean) => {
+        seletorView(nome);
+        if (!isDropdown) {
+            setDrawerOpen(false);
+        }
+        if (link) {
+            navigate(link);
+        }
+    };
 
-	const handleMobileMenuItemClick = (nome: string, link?: string) => {
+    const handleMobileMenuItemClick = (nome: string, link?: string) => {
         seletorView(nome);
         setDrawerOpen(false);
         if (link) {
@@ -47,11 +47,52 @@ export default function BarraNavegacao(props: Props) {
     };
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLDivElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
+        setAnchorEl(event.currentTarget);
+    };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    const renderMenuItems = (botao: Botao, index: number) => {
+        if (botao.dropdown) {
+            return (
+                <div key={index}>
+                    <ListItem>
+                        <ListItemButton
+                            aria-controls="cadastros-menu"
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                handleMenuOpen(event);
+                                handleListItemClick(botao.nome, undefined, true);
+                            }}
+                        >
+                            <ListItemText primary={botao.nome} />
+                        </ListItemButton>
+                    </ListItem>
+                    <Menu
+                        id="cadastros-menu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                    >
+                        {botao.dropdown.map((dropdownItem, dropdownIndex) => (
+                            <MenuItem key={dropdownIndex} onClick={() => handleListItemClick(dropdownItem.nome, dropdownItem.link)}>
+                                {dropdownItem.nome}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </div>
+            );
+        } else {
+            return (
+                <Link key={index} to={botao.link || '/'} style={{ textDecoration: "none", color: "inherit" }}>
+                    <ListItem button onClick={() => handleListItemClick(botao.nome)} sx={{ py: 2 }}>
+                        <ListItemText primary={botao.nome} />
+                    </ListItem>
+                </Link>
+            );
+        }
     };
 
     return (
@@ -60,50 +101,14 @@ export default function BarraNavegacao(props: Props) {
                 <Toolbar>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>WB</Typography>
                     {isMobile ? (
-					<IconButton edge="end" color="inherit" aria-label="menu" onClick={toggleDrawer}>
-						<MenuIcon />
-					</IconButton>
-				) : (
-					<Box sx={{ display: 'flex' }}>
-						{botoes.map((botao, index) => (
-							botao.dropdown ? (
-								<div key={index}>
-									<ListItem>
-										<ListItemButton
-											aria-controls="cadastros-menu"
-											aria-haspopup="true"
-											onClick={(event) => {
-												handleMenuOpen(event);
-												handleListItemClick(botao.nome, undefined, true);
-											}}
-										>
-											<ListItemText primary={botao.nome} />
-										</ListItemButton>
-									</ListItem>
-									<Menu
-										id="cadastros-menu"
-										anchorEl={anchorEl}
-										open={Boolean(anchorEl)}
-										onClose={handleMenuClose}
-									>
-										{botao.dropdown.map((dropdownItem, dropdownIndex) => (
-											<MenuItem key={dropdownIndex} onClick={() => handleListItemClick(dropdownItem.nome, dropdownItem.link)}>
-												{dropdownItem.nome}
-											</MenuItem>
-										))}
-									</Menu>
-								</div>
-							) : (
-								<Link key={index} to={botao.link || '/'} style={{ textDecoration: "none", color: "inherit" }}>
-									<ListItem button onClick={() => handleListItemClick(botao.nome)} sx={{ py: 2 }}>
-										<ListItemText primary={botao.nome} />
-									</ListItem>
-								</Link>
-							)
-						))}
-					</Box>
-				)}
-
+                        <IconButton edge="end" color="inherit" aria-label="menu" onClick={toggleDrawer}>
+                            <MenuIcon />
+                        </IconButton>
+                    ) : (
+                        <Box sx={{ display: 'flex' }}>
+                            {botoes.map((botao, index) => renderMenuItems(botao, index))}
+                        </Box>
+                    )}
                 </Toolbar>
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import BarraNavegacao from "../componentes/barraNavegacao";
@@ -8,7 +8,6 @@ import FormularioCadastroServico from "../componentes/formularioCadastroServico"
 import ListaCliente from "../pages/listaCliente";
 import ListaProdutos from "../pages/listaProdutos";
 import ListaServicos from "../pages/listaServicos";
-
 
 type Cliente = {
     nome: string;
@@ -30,13 +29,6 @@ type Servico = {
     nome: string;
     descricao: string;
     preco: number;
-};
-
-type State = {
-    tela: string;
-    clientes: Cliente[];
-    produtos: Produto[];
-    servicos: Servico[];
 };
 
 type Botao = {
@@ -68,49 +60,30 @@ const theme = createTheme({
     },
 });
 
-export default class Roteador extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-			tela: 'Clientes',
-			clientes: [],
-			produtos: [],
-			servicos: [],
-        };
-        this.selecionarView = this.selecionarView.bind(this);
-        this.handleCadastroCliente = this.handleCadastroCliente.bind(this);
-		this.handleCadastroProduto = this.handleCadastroProduto.bind(this);
-		this.handleCadastroServico = this.handleCadastroServico.bind(this);
-    }
+export default function Roteador(props: Props) {
+    const [tela, setTela] = useState<string>('Clientes');
+    const [clientes, setClientes] = useState<Cliente[]>([]);
+    const [produtos, setProdutos] = useState<Produto[]>([]);
+    const [servicos, setServicos] = useState<Servico[]>([]);
 
-    selecionarView(novaTela: string) {
-        this.setState({
-            tela: novaTela
-        });
-    }
+    const selecionarView = (novaTela: string) => {
+        setTela(novaTela);
+    };
 
-    handleCadastroCliente(cliente: Cliente) {
-        this.setState((prevState) => ({
-            clientes: [...prevState.clientes, cliente]
-        }));
-    }
+    const handleCadastroCliente = (cliente: Cliente) => {
+        setClientes([...clientes, cliente]);
+    };
 
-	handleCadastroProduto(produto: Produto) {
-        this.setState((prevState) => ({
-            produtos: [...prevState.produtos, produto]
-        }));
-    }
+	const handleCadastroProduto = (produto: Produto) => {
+        setProdutos([...produtos, produto]);
+    };
 
-	handleCadastroServico(servico: Servico) {
-        this.setState((prevState) => ({
-            servicos: [...prevState.servicos, servico]
-        }));
-    }
+	const handleCadastroServico = (servico: Servico) => {
+        setServicos([...servicos, servico]);
+    };
 
-	calculateProdutosConsumidosPorGenero = () => {
-        const { clientes } = this.state;
+	const calculateProdutosConsumidosPorGenero = () => {
         const produtosConsumidosPorGenero: { genero: string; produtos: Produto[] }[] = [];
-
         const produtosConsumidosMap: { [key: string]: Produto[] } = {};
 
         clientes.forEach((cliente) => {
@@ -133,10 +106,8 @@ export default class Roteador extends Component<Props, State> {
 		return produtosConsumidosPorGenero;
 	};
 
-	calculateServicosConsumidosPorGenero = () => {
-		const { clientes } = this.state;
+	const calculateServicosConsumidosPorGenero = () => {
 		const servicosConsumidosPorGenero: { genero: string; servicos: Servico[] }[] = [];
-	
 		const servicosConsumidosMap: { [key: string]: Servico[] } = {};
 	
 		clientes.forEach((cliente) => {
@@ -157,52 +128,45 @@ export default class Roteador extends Component<Props, State> {
 		}
 	
 		return servicosConsumidosPorGenero;
-	}
-	
+	};
 
-    render() {
-		const botoes: Botao[] = [
-			{
-				nome: 'Cadastros',
-				dropdown: [
-					{ nome: 'Clientes', link: '/cadastros/cliente' },
-					{ nome: 'Produtos', link: '/cadastros/produto' },
-					{ nome: 'Serviços', link: '/cadastros/servico' }
-				]
-			},
-			{ nome: 'Clientes', link: '/clientes' },
-			{ nome: 'Produtos', link: '/produtos' },
-			{ nome: 'Serviços', link: '/servicos' }
-		];
-		
+	const botoes: Botao[] = [
+		{
+			nome: 'Cadastros',
+			dropdown: [
+				{ nome: 'Clientes', link: '/cadastros/cliente' },
+				{ nome: 'Produtos', link: '/cadastros/produto' },
+				{ nome: 'Serviços', link: '/cadastros/servico' }
+			]
+		},
+		{ nome: 'Clientes', link: '/clientes' },
+		{ nome: 'Produtos', link: '/produtos' },
+		{ nome: 'Serviços', link: '/servicos' }
+	];
 
-
-        const { clientes, produtos, servicos } = this.state;
-
-		return (
-            <ThemeProvider theme={theme}>
-                <Router>
-                    <BarraNavegacao
-                        seletorView={(valor: string) => this.selecionarView(valor)}
-                        tema="purple lighten-4"
-                        botoes={botoes}
-                    />
-                    <Routes>
-						<Route path="/" element={<Navigate to="/clientes" />} />
-						<Route path="/clientes" element={<ListaCliente clientes={clientes} />} />
-						<Route path="/cadastros/cliente" element={<FormularioCadastroCliente
-							tema="purple lighten-4"
-							onCadastroCliente={this.handleCadastroCliente}
-							produtosOptions={produtos}
-							servicosOptions={servicos}
-						/>} />
-						<Route path="/cadastros/produto" element={<FormularioCadastroProduto tema="purple lighten-4" onCadastroProduto={this.handleCadastroProduto} />} />
-						<Route path="/cadastros/servico" element={<FormularioCadastroServico tema="purple lighten-4" onCadastroServico={this.handleCadastroServico} />} />
-						<Route path="/produtos" element={<ListaProdutos produtos={produtos} produtosConsumidosPorGenero={this.calculateProdutosConsumidosPorGenero()} />} />
-						<Route path="/servicos" element={<ListaServicos servicos={servicos} servicosConsumidosPorGenero={this.calculateServicosConsumidosPorGenero()} />} />
-					</Routes>
-                </Router>
-            </ThemeProvider>
-        );
-    }
+	return (
+		<ThemeProvider theme={theme}>
+			<Router>
+				<BarraNavegacao
+					seletorView={(valor: string) => selecionarView(valor)}
+					tema="purple lighten-4"
+					botoes={botoes}
+				/>
+				<Routes>
+					<Route path="/" element={<Navigate to="/clientes" />} />
+					<Route path="/clientes" element={<ListaCliente clientes={clientes} />} />
+					<Route path="/cadastros/cliente" element={<FormularioCadastroCliente
+						tema="purple lighten-4"
+						onCadastroCliente={handleCadastroCliente}
+						produtosOptions={produtos}
+						servicosOptions={servicos}
+					/>} />
+					<Route path="/cadastros/produto" element={<FormularioCadastroProduto tema="purple lighten-4" onCadastroProduto={handleCadastroProduto} />} />
+					<Route path="/cadastros/servico" element={<FormularioCadastroServico tema="purple lighten-4" onCadastroServico={handleCadastroServico} />} />
+					<Route path="/produtos" element={<ListaProdutos produtos={produtos} produtosConsumidosPorGenero={calculateProdutosConsumidosPorGenero()} />} />
+					<Route path="/servicos" element={<ListaServicos servicos={servicos} servicosConsumidosPorGenero={calculateServicosConsumidosPorGenero()} />} />
+				</Routes>
+			</Router>
+		</ThemeProvider>
+	);
 }
