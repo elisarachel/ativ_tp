@@ -3,6 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@mui/material/styles';
 import { useState } from "react";
 import { SelectChangeEvent } from '@mui/material';
+import React from "react";
 
 export interface Produto {
     nome: string;
