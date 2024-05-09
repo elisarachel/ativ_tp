@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Typography, List, ListItem, ListItemText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useTheme } from '@mui/material/styles';
+import { withTheme } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
 
 export interface Servico {
     nome: string;
@@ -12,117 +13,123 @@ export interface Servico {
 interface Props {
     servicos: Servico[];
     servicosConsumidosPorGenero: { genero: string; servicos: Servico[] }[];
+	tema: Theme;
 }
 
-const ListaServicos: React.FC<Props> = ({ servicos, servicosConsumidosPorGenero }) => {
-    const theme = useTheme();
-    const [filterOption, setFilterOption] = useState('');
-    const [selectedGender, setSelectedGender] = useState<string>('');
+class ListaServicosBase extends React.Component<Props> {
+    state = {
+        filterOption: '',
+        selectedGender: '',
+    };
 
-    const handleFilterChange = (event: SelectChangeEvent<string>) => {
+    handleFilterChange = (event: SelectChangeEvent<string>) => {
         const value = event.target.value;
-        setFilterOption(value);
+        this.setState({ filterOption: value });
         if (value !== 'listarPorGenero') {
-            setSelectedGender('');
+            this.setState({ selectedGender: '' });
         }
     };
 
-    const handleGenderFilterChange = (event: SelectChangeEvent<string>) => {
+    handleGenderFilterChange = (event: SelectChangeEvent<string>) => {
         const value = event.target.value;
-        setSelectedGender(value);
+        this.setState({ selectedGender: value });
     };
 
-    const filterServicesByGender = (genero: string) => {
-        const item = servicosConsumidosPorGenero.find(item => item.genero === genero);
+    filterServicesByGender = (genero: string) => {
+        const item = this.props.servicosConsumidosPorGenero.find(item => item.genero === genero);
         return item ? item.servicos : [];
     };
 
-	const calculaServicosMaisConsumidos = () => {
-		const serviceCounts: { [key: string]: number } = {};
-		servicosConsumidosPorGenero.forEach(({ servicos }) => {
-			servicos.forEach((servico) => {
-				serviceCounts[servico.nome] = (serviceCounts[servico.nome] || 0) + 1;
-			});
-		});
-	
-		const sortedServices = Object.keys(serviceCounts).sort((a, b) => serviceCounts[b] - serviceCounts[a]);
-	
-		return sortedServices
-			.map((serviceName) => servicos.find((servico) => servico.nome === serviceName))
-			.filter((servico) => servico !== undefined) as Servico[];
-	};
-	
-    const filterServices = () => {
-        switch (filterOption) {
+    calculaServicosMaisConsumidos = () => {
+        const serviceCounts: { [key: string]: number } = {};
+        this.props.servicosConsumidosPorGenero.forEach(({ servicos }) => {
+            servicos.forEach((servico) => {
+                serviceCounts[servico.nome] = (serviceCounts[servico.nome] || 0) + 1;
+            });
+        });
+
+        const sortedServices = Object.keys(serviceCounts).sort((a, b) => serviceCounts[b] - serviceCounts[a]);
+
+        return sortedServices
+        .map((serviceName) => this.props.servicos.find((servico) => servico.nome === serviceName))
+        .filter((servico) => servico !== undefined) as Servico[];
+    };
+
+    filterServices = () => {
+        switch (this.state.filterOption) {
             case 'mostConsumed':
-                return calculaServicosMaisConsumidos();
+                return this.calculaServicosMaisConsumidos();
             case 'listarPorGenero':
-                return filterServicesByGender(selectedGender);
+                return this.filterServicesByGender(this.state.selectedGender);
             default:
-                return servicos;
+                return this.props.servicos;
         }
     };
 
-    const filteredServices = filterServices();
+    render() {
+        const filteredServices = this.filterServices();
+        const genders = ["Masculino", "Feminino", "Não-binário", "Outros"];
+		const { tema } = this.props;
 
-    const genders = ["Masculino", "Feminino", "Não-binário", "Outros"];
-
-    return (
-        <div style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}>
-            <Typography variant="h2" style={{ fontFamily: theme.typography.fontFamily, marginLeft: theme.spacing(2), marginRight: theme.spacing(2), color: '#515151' }}>Lista de Serviços</Typography>
-            <FormControl variant="outlined" style={{ marginTop: theme.spacing(2), marginLeft: theme.spacing(2), marginRight: theme.spacing(2), marginBottom: theme.spacing(2), minWidth: 200 }}>
-                <InputLabel id="filter-select-label">Filtrar</InputLabel>
-                <Select
-                    labelId="filter-select-label"
-                    id="filter-select"
-                    value={filterOption}
-                    onChange={handleFilterChange}
-                    label="Filtrar"
-                >
-                    <MenuItem value="">Todos</MenuItem>
-                    <MenuItem value="mostConsumed">Mais Consumidos</MenuItem>
-                    <MenuItem value="listarPorGenero">Por Gênero</MenuItem>
-                </Select>
-            </FormControl>
-            {filterOption === 'listarPorGenero' && (
-                <FormControl variant="outlined" style={{ marginTop: theme.spacing(2), marginLeft: theme.spacing(2), marginRight: theme.spacing(2), minWidth: 200 }}>
-                    <InputLabel id="gender-filter-select-label">Filtrar por Gênero</InputLabel>
+        return (
+            <div style={{ marginTop: this.props.tema.spacing(2), marginBottom: this.props.tema.spacing(2) }}>
+                <Typography variant="h2" style={{ fontFamily: this.props.tema.typography.fontFamily, marginLeft: this.props.tema.spacing(2), marginRight: this.props.tema.spacing(2), color: '#515151' }}>Lista de Serviços</Typography>
+                <FormControl variant="outlined" style={{ marginTop: this.props.tema.spacing(2), marginLeft: this.props.tema.spacing(2), marginRight: this.props.tema.spacing(2), marginBottom: this.props.tema.spacing(2), minWidth: 200 }}>
+                    <InputLabel id="filter-select-label">Filtrar</InputLabel>
                     <Select
-                        labelId="gender-filter-select-label"
-                        id="gender-filter-select"
-                        value={selectedGender}
-                        onChange={handleGenderFilterChange}
-                        label="Filtrar por Gênero"
+                        labelId="filter-select-label"
+                        id="filter-select"
+                        value={this.state.filterOption}
+                        onChange={this.handleFilterChange}
+                        label="Filtrar"
                     >
-                        {genders.map((gender, index) => (
-                            <MenuItem key={index} value={gender}>{gender}</MenuItem>
-                        ))}
+                        <MenuItem value="">Todos</MenuItem>
+                        <MenuItem value="mostConsumed">Mais Consumidos</MenuItem>
+                        <MenuItem value="listarPorGenero">Por Gênero</MenuItem>
                     </Select>
                 </FormControl>
-            )}
-            {filteredServices.map((servico: Servico, index: number) => (
-                <Accordion key={index} className={theme.palette.primary.main}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel${index}-content`}
-                        id={`panel${index}-header`}
-                    >
-                        <Typography>{servico.nome}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <List>
-                            <ListItem>
-                                <ListItemText primary={`Descrição: ${servico.descricao}`} />
-                            </ListItem>
-                            <ListItem>
-                                <ListItemText primary={`Preço: ${servico.preco}`} />
-                            </ListItem>
-                        </List>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
-        </div>
-    );
+                {this.state.filterOption === 'listarPorGenero' && (
+                    <FormControl variant="outlined" style={{ marginTop: this.props.tema.spacing(2), marginLeft: this.props.tema.spacing(2), marginRight: this.props.tema.spacing(2), minWidth: 200 }}>
+                        <InputLabel id="gender-filter-select-label">Filtrar por Gênero</InputLabel>
+                        <Select
+                            labelId="gender-filter-select-label"
+                            id="gender-filter-select"
+                            value={this.state.selectedGender}
+                            onChange={this.handleGenderFilterChange}
+                            label="Filtrar por Gênero"
+                        >
+                            {genders.map((gender, index) => (
+                                <MenuItem key={index} value={gender}>{gender}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                )}
+                {filteredServices.map((servico: Servico, index: number) => (
+                    <Accordion key={index} className={tema.palette.primary.main}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls={`panel${index}-content`}
+                            id={`panel${index}-header`}
+                        >
+                            <Typography>{servico.nome}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <List>
+                                <ListItem>
+                                    <ListItemText primary={`Descrição: ${servico.descricao}`} />
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText primary={`Preço: ${servico.preco}`} />
+                                </ListItem>
+                            </List>
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
+            </div>
+        );
+    }
 }
+
+const ListaServicos = withTheme(ListaServicosBase);
 
 export default ListaServicos;

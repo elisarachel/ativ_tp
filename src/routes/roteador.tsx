@@ -189,7 +189,7 @@ export default class Roteador extends Component<Props, State> {
                     />
                     <Routes>
 						<Route path="/" element={<Navigate to="/clientes" />} />
-						<Route path="/clientes" element={<ListaCliente clientes={clientes} />} />
+						<Route path="/clientes" element={<ListaCliente clientes={clientes} tema={theme} />} />
 						<Route path="/cadastros/cliente" element={<FormularioCadastroCliente
 							tema="purple lighten-4"
 							onCadastroCliente={this.handleCadastroCliente}
@@ -198,8 +198,8 @@ export default class Roteador extends Component<Props, State> {
 						/>} />
 						<Route path="/cadastros/produto" element={<FormularioCadastroProduto tema="purple lighten-4" onCadastroProduto={this.handleCadastroProduto} />} />
 						<Route path="/cadastros/servico" element={<FormularioCadastroServico tema="purple lighten-4" onCadastroServico={this.handleCadastroServico} />} />
-						<Route path="/produtos" element={<ListaProdutos produtos={produtos} produtosConsumidosPorGenero={this.calculateProdutosConsumidosPorGenero()} />} />
-						<Route path="/servicos" element={<ListaServicos servicos={servicos} servicosConsumidosPorGenero={this.calculateServicosConsumidosPorGenero()} />} />
+						<Route path="/produtos" element={<ListaProdutos produtos={produtos} tema={theme} produtosConsumidosPorGenero={this.calculateProdutosConsumidosPorGenero()} />} />
+						<Route path="/servicos" element={<ListaServicos servicos={servicos} tema={theme}servicosConsumidosPorGenero={this.calculateServicosConsumidosPorGenero()} />} />
 					</Routes>
                 </Router>
             </ThemeProvider>

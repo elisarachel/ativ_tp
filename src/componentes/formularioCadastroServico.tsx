@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { TextField, Button, Grid, useMediaQuery, useTheme } from "@mui/material";
+import React, { Component } from "react";
+import { TextField, Button, Grid } from "@mui/material";
 
 interface Servico {
     nome: string;
@@ -12,113 +12,115 @@ interface Props {
     onCadastroServico: (servico: Servico) => void;
 }
 
-const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico }) => {
-    const [formData, setFormData] = useState<Servico>({
-        nome: "",
-        descricao: "",
-        preco: 0,
-    });
+export default class FormularioCadastroServico extends Component<Props, Servico> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            nome: "",
+            descricao: "",
+            preco: 0,
+        };
+    }
 
-    const handleInputChange = (
+    handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
+        this.setState((prevState) => ({
+            ...prevState,
             [name]: value,
         }));
     };
 
-	const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value.replace(/\D/g, '');
-        setFormData((prevData) => ({
-            ...prevData,
+        this.setState((prevState) => ({
+            ...prevState,
             preco: parseInt(value) || 0, 
         }));
     };
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const { nome, descricao, preco } = formData;
+        const { nome, descricao, preco } = this.state;
         if (!nome || !descricao || preco <= 0) {
             alert("Todos os campos são obrigatórios e o preço deve ser maior que 0.");
             return;
         }
 
-        onCadastroServico(formData);
+        this.props.onCadastroServico(this.state);
 
-        setFormData({
+        this.setState({
             nome: "",
             descricao: "",
             preco: 0,
         });
     };
 
-	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    render() {
+        const { tema } = this.props;
 
-    return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <form onSubmit={handleFormSubmit}>
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                id="nome"
-                                label="Nome do Serviço"
-                                variant="outlined"
-                                name="nome"
-                                value={formData.nome}
-                                onChange={handleInputChange}
-								required
-                            />
+        return (
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <form onSubmit={this.handleFormSubmit}>
+                        <Grid container spacing={2} sx={{ mt: 2 }}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    id="nome"
+                                    label="Nome do Serviço"
+                                    variant="outlined"
+                                    name="nome"
+                                    value={this.state.nome}
+                                    onChange={this.handleInputChange}
+									required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    id="descricao"
+                                    label="Descrição"
+                                    variant="outlined"
+                                    name="descricao"
+                                    value={this.state.descricao}
+                                    onChange={this.handleInputChange}
+                                    multiline
+                                    rows={4}
+									required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    id="preco"
+                                    label="Preço"
+                                    variant="outlined"
+                                    name="preco"
+                                    type="number"
+                                    value={this.state.preco}
+                                    onChange={this.handlePriceChange}
+									required
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                id="descricao"
-                                label="Descrição"
-                                variant="outlined"
-                                name="descricao"
-                                value={formData.descricao}
-                                onChange={handleInputChange}
-                                multiline
-                                rows={4}
-								required
-                            />
+                        <Grid container spacing={2} sx={{ mt: 2 }}>
+                            <Grid item xs={12}>
+                                <Button
+                                    variant="contained"
+                                    type="submit"
+                                    className={tema}
+                                    fullWidth
+                                >
+                                    Submit
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                id="preco"
-                                label="Preço"
-                                variant="outlined"
-                                name="preco"
-                                type="number"
-                                value={formData.preco}
-                                onChange={handlePriceChange}
-								required
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                type="submit"
-                                className={tema}
-                                fullWidth={isMobile}
-                            >
-                                Submit
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
+                    </form>
+                </Grid>
             </Grid>
-        </Grid>
-    );
-};
-
-export default FormularioCadastroServico;
+        );
+    }
+}
