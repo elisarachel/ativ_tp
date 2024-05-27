@@ -1,0 +1,16 @@
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/atualizadores/Atualizador.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/entidades/Endereco.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/entidades/Telefone.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/repositorios/RepositorioCliente.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/verificadores/VerificadorEnderecoNulo.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/verificadores/Verificador.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/hateoas/Hateoas.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/atualizadores/AtualizadorCliente.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/comparadores/ComparadorTelefone.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/atualizadores/AtualizadorEndereco.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/hateoas/HateoasCliente.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/verificadores/VerificadorTelefoneNulo.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/verificadores/VerificadorStringNula.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/controles/ControleCliente.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/entidades/Cliente.java
+/home/elisarachel/Documents/fatec/2DSM/tp/atvs/atviv/wbbackend/src/main/java/com/wb/wbbackend/WbbackendApplication.java

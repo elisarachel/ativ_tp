@@ -1,0 +1,17 @@
+com/wb/wbbackend/atualizadores/AtualizadorCliente.class
+com/wb/wbbackend/repositorios/RepositorioCliente.class
+com/wb/wbbackend/WbbackendApplication.class
+com/wb/wbbackend/entidades/Telefone.class
+com/wb/wbbackend/atualizadores/AtualizadorEndereco.class
+com/wb/wbbackend/verificadores/VerificadorEnderecoNulo.class
+com/wb/wbbackend/controles/ControleCliente.class
+com/wb/wbbackend/verificadores/VerificadorStringNula.class
+com/wb/wbbackend/atualizadores/Atualizador.class
+com/wb/wbbackend/entidades/Endereco.class
+com/wb/wbbackend/verificadores/VerificadorTelefoneNulo.class
+com/wb/wbbackend/WbbackendApplication$Runner.class
+com/wb/wbbackend/verificadores/Verificador.class
+com/wb/wbbackend/entidades/Cliente.class
+com/wb/wbbackend/comparadores/ComparadorTelefone.class
+com/wb/wbbackend/hateoas/HateoasCliente.class
+com/wb/wbbackend/hateoas/Hateoas.class
