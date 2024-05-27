@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import { TextField, Button, Grid, Box, Typography } from '@mui/material';
 
 interface FormClientesProps {
-  onSubmitSuccess: () => void;
+  onSubmitSuccess?: () => void;
 }
 
 const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
-  const [clienteData, setClienteData] = useState({
+  const { id } = useParams<{ id: string }>();
+  const [clienteData, setClienteData] = useState<any>({
     nome: '',
     sobreNome: '',
     email: '',
@@ -26,9 +28,25 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
     }]
   });
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (id) {
+      const fetchClient = async () => {
+        try {
+          const response = await axios.get(`http://localhost:32832/cliente/${id}`);
+          setClienteData(response.data);
+        } catch (error) {
+          console.error('Error fetching client:', error);
+        }
+      };
+      fetchClient();
+    }
+  }, [id]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    setClienteData(prevData => ({
+    setClienteData((prevData: any) => ({
       ...prevData,
       [name]: value
     }));
@@ -36,7 +54,7 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
 
   const handleEnderecoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
-    setClienteData(prevData => ({
+    setClienteData((prevData: any) => ({
       ...prevData,
       endereco: {
         ...prevData.endereco,
@@ -47,17 +65,16 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number): void => {
     const { name, value } = e.target;
-    const key = name.slice(0, -1); // Remove the index from the end of the name
-    setClienteData(prevData => ({
+    setClienteData((prevData: any) => ({
       ...prevData,
-      telefones: prevData.telefones.map((telefone, i) =>
-        i === index ? { ...telefone, [key]: value } : telefone
+      telefones: prevData.telefones.map((telefone: any, i: number) =>
+        i === index ? { ...telefone, [name]: value } : telefone
       )
     }));
   };
 
   const handleAddTelefone = (): void => {
-    setClienteData(prevData => ({
+    setClienteData((prevData: any) => ({
       ...prevData,
       telefones: [...prevData.telefones, { ddd: '', numero: '' }]
     }));
@@ -66,7 +83,11 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:32832/cliente/cadastrar', clienteData);
+      if (id) {
+        await axios.put(`http://localhost:32832/cliente/atualizar`, clienteData);
+      } else {
+        await axios.post('http://localhost:32832/cliente/cadastrar', clienteData);
+      }
       setClienteData({
         nome: '',
         sobreNome: '',
@@ -85,7 +106,8 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
           numero: ''
         }]
       });
-      onSubmitSuccess();
+      onSubmitSuccess && onSubmitSuccess();
+      navigate('/');
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -93,7 +115,7 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
 
   return (
     <Box component="form" sx={{ p: 4 }} onSubmit={handleSubmit}>
-      <Typography variant="h4" gutterBottom>Cadastro de Cliente</Typography>
+      <Typography variant="h4" gutterBottom>{id ? 'Atualizar Cliente' : 'Cadastro de Cliente'}</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -144,7 +166,7 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
             onChange={handleEnderecoChange}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             required
@@ -154,7 +176,7 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
             onChange={handleEnderecoChange}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             required
@@ -191,18 +213,16 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
             name="informacoesAdicionais"
             value={clienteData.endereco.informacoesAdicionais}
             onChange={handleEnderecoChange}
-            multiline
-            rows={4}
           />
         </Grid>
-        {clienteData.telefones.map((telefone, index) => (
+        {clienteData.telefones.map((telefone: any, index: number) => (
           <React.Fragment key={index}>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 required
-                label={`DDD ${index + 1}`}
-                name={`ddd${index}`}
+                label="DDD"
+                name="ddd"
                 value={telefone.ddd}
                 onChange={(e) => handleTelefoneChange(e, index)}
               />
@@ -211,8 +231,8 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
               <TextField
                 fullWidth
                 required
-                label={`Número ${index + 1}`}
-                name={`numero${index}`}
+                label="Número"
+                name="numero"
                 value={telefone.numero}
                 onChange={(e) => handleTelefoneChange(e, index)}
               />
@@ -220,14 +240,10 @@ const FormClientes: React.FC<FormClientesProps> = ({ onSubmitSuccess }) => {
           </React.Fragment>
         ))}
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={handleAddTelefone}>
-            Adicionar Telefone
-          </Button>
+          <Button variant="outlined" onClick={handleAddTelefone}>Adicionar Telefone</Button>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" type="submit">
-            Enviar
-          </Button>
+          <Button variant="contained" color="primary" type="submit">{id ? 'Atualizar' : 'Cadastrar'}</Button>
         </Grid>
       </Grid>
     </Box>
