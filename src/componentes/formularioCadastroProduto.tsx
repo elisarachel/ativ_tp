@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, useMediaQuery, useTheme } from "@mui/material";
+import axios from 'axios';
 
 interface Produto {
+	id: number;
     nome: string;
     descricao: string;
     preco: number;
@@ -14,6 +16,7 @@ interface Props {
 
 const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto }) => {
     const [formData, setFormData] = useState<Produto>({
+		id: 0,
         nome: "",
         descricao: "",
         preco: 0,
@@ -29,7 +32,7 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
         }));
     };
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const { nome, descricao, preco } = formData;
@@ -38,13 +41,19 @@ const FormularioCadastroProduto: React.FC<Props> = ({ tema, onCadastroProduto })
             return;
         }
 
-        onCadastroProduto(formData);
+        try {
+            const response = await axios.post('http://localhost:5000/api/products', formData);
+            onCadastroProduto(response.data);
 
-        setFormData({
-            nome: "",
-            descricao: "",
-            preco: 0,
-        });
+            setFormData({
+				id: 0,
+                nome: "",
+                descricao: "",
+                preco: 0,
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+        }
     };
 
     const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {

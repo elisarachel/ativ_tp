@@ -3,27 +3,44 @@ import { TextField, Button, Grid, Select, MenuItem, FormControl, InputLabel, use
 import { SelectChangeEvent } from '@mui/material';
 import { Produto } from '../pages/listaProdutos';
 import { Servico } from '../pages/listaServicos';
+import axios from "axios";
 
-interface State {
+type ProdutoConsumido = {
+    id: number;
+    clienteId: number;
+    produtoId: number;
+    produto: Produto;
+};
+
+type ServicoConsumido = {
+    id: number;
+    clienteId: number;
+    servicoId: number;
+    servico: Servico;
+};
+
+interface Cliente {
+    id: number;
     nome: string;
     sobrenome: string;
     telefone: string;
     email: string;
     genero: string;
-    produtosConsumidos: Produto[];
-    servicosConsumidos: Servico[];
-}
+    produtosConsumidos: ProdutoConsumido[];
+    servicosConsumidos: ServicoConsumido[];
+};
 
 interface Props {
     tema: string;
-    onCadastroCliente: (cliente: State) => void;
+    onCadastroCliente: (cliente: Cliente) => void;
     produtosOptions: Produto[];
     servicosOptions: Servico[];
 }
 
 export default function FormularioCadastroCliente(props: Props) {
     const { tema, onCadastroCliente, produtosOptions, servicosOptions } = props;
-    const [formData, setFormData] = useState<State>({
+    const [formData, setFormData] = useState<Cliente>({
+		id: 0,
         nome: "",
         sobrenome: "",
         telefone: "",
@@ -58,11 +75,8 @@ export default function FormularioCadastroCliente(props: Props) {
 			}));
 		}
 	};
-	
 
-    const handleSelectChange = (
-        event: SelectChangeEvent<string>
-    ) => {
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
         const value = event.target.value;
         setFormData((prevData) => ({
             ...prevData,
@@ -70,24 +84,74 @@ export default function FormularioCadastroCliente(props: Props) {
         }));
     };
 
-    const handleProdutosChange = (event: React.ChangeEvent<{}>, value: Produto[]) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            produtosConsumidos: value,
-        }));
-    };
+	const handleProdutosChange = (event: React.ChangeEvent<{}>, value: Produto[]) => {
+		const produtosConsumidos: ProdutoConsumido[] = value.map(produto => ({
+			id: produto.id,
+			clienteId: formData.id, // Assuming you want to associate the produto with the current client
+			produtoId: produto.id,
+			produto: produto,
+		}));
+	
+		setFormData((prevData) => ({
+			...prevData,
+			produtosConsumidos: produtosConsumidos,
+		}));
+	};
+	
+	const handleServicosChange = (event: React.ChangeEvent<{}>, value: Servico[]) => {
+		const servicosConsumidos: ServicoConsumido[] = value.map(servico => ({
+			id: servico.id,
+			clienteId: formData.id, // Assuming you want to associate the servico with the current client
+			servicoId: servico.id,
+			servico: servico,
+		}));
+	
+		setFormData((prevData) => ({
+			...prevData,
+			servicosConsumidos: servicosConsumidos,
+		}));
+	};
+	
 
-    const handleServicosChange = (event: React.ChangeEvent<{}>, value: Servico[]) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            servicosConsumidos: value,
-        }));
-    };
-
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        onCadastroCliente(formData);
-    };
+	const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+	
+		console.log('Form data before submission:', formData);
+	
+		if (!Array.isArray(formData.produtosConsumidos) || !Array.isArray(formData.servicosConsumidos)) {
+			console.error('produtosConsumidos or servicosConsumidos are not arrays');
+			return;
+		}
+	
+		try {
+			const produtosConsumidos = formData.produtosConsumidos.map(produto => ({ id: produto.id }));
+			const servicosConsumidos = formData.servicosConsumidos.map(servico => ({ id: servico.id }));
+	
+			const dataToSend = {
+				...formData,
+				produtosConsumidos,
+				servicosConsumidos
+			};
+	
+			console.log('Data to send:', dataToSend);
+	
+			const response = await axios.post('http://localhost:5000/api/clients', dataToSend);
+			onCadastroCliente(response.data);
+			setFormData({
+				id: 0,
+				nome: "",
+				sobrenome: "",
+				telefone: "",
+				email: "",
+				genero: "",
+				produtosConsumidos: [],
+				servicosConsumidos: []
+			});
+		} catch (error) {
+			console.error('There was an error!', error);
+		}
+	};
+	
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -106,7 +170,7 @@ export default function FormularioCadastroCliente(props: Props) {
                                 name="nome"
                                 value={formData.nome}
                                 onChange={handleInputChange}
-								required
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -118,7 +182,7 @@ export default function FormularioCadastroCliente(props: Props) {
                                 name="sobrenome"
                                 value={formData.sobrenome}
                                 onChange={handleInputChange}
-								required
+                                required
                             />
                         </Grid>
                     </Grid>
@@ -132,7 +196,7 @@ export default function FormularioCadastroCliente(props: Props) {
                                 name="telefone"
                                 value={formData.telefone}
                                 onChange={handleInputChange}
-								required
+                                required
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -144,7 +208,7 @@ export default function FormularioCadastroCliente(props: Props) {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-								required
+                                required
                             />
                         </Grid>
                     </Grid>
@@ -158,7 +222,7 @@ export default function FormularioCadastroCliente(props: Props) {
                                     value={formData.genero}
                                     onChange={handleSelectChange}
                                     label="Gênero"
-									required
+                                    required
                                 >
                                     <MenuItem value="">Selecione</MenuItem>
                                     <MenuItem value="Feminino">Feminino</MenuItem>

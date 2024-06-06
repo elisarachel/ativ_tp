@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, useMediaQuery, useTheme } from "@mui/material";
+import axios from 'axios';
 
 interface Servico {
+	id: number;
     nome: string;
     descricao: string;
     preco: number;
@@ -14,6 +16,7 @@ interface Props {
 
 const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico }) => {
     const [formData, setFormData] = useState<Servico>({
+		id: 0,
         nome: "",
         descricao: "",
         preco: 0,
@@ -33,11 +36,11 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
         const value = event.target.value.replace(/\D/g, '');
         setFormData((prevData) => ({
             ...prevData,
-            preco: parseInt(value) || 0, 
+            preco: parseInt(value) || 0,
         }));
     };
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const { nome, descricao, preco } = formData;
@@ -46,13 +49,19 @@ const FormularioCadastroServico: React.FC<Props> = ({ tema, onCadastroServico })
             return;
         }
 
-        onCadastroServico(formData);
+        try {
+            const response = await axios.post('http://localhost:5000/api/services', formData);
+            onCadastroServico(response.data);
 
-        setFormData({
-            nome: "",
-            descricao: "",
-            preco: 0,
-        });
+            setFormData({
+				id: 0,
+                nome: "",
+                descricao: "",
+                preco: 0,
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+        }
     };
 
 	const theme = useTheme();
