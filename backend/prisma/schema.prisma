@@ -1,0 +1,55 @@
+datasource db {
+  provider = "mysql"
+  url      = "mysql://fatec:senha@localhost:3306/wb"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Cliente {
+  id                 Int                @id @default(autoincrement())
+  nome               String
+  sobrenome          String
+  telefone           String
+  email              String
+  genero             String
+  produtosConsumidos ProdutosClientes[] @relation("ClienteToProdutosClientes")
+  servicosConsumidos ServicosClientes[] @relation("ClienteToServicosClientes")
+}
+
+model Produto {
+  id        Int                @id @default(autoincrement())
+  nome      String
+  descricao String
+  preco     Float
+  clientes  ProdutosClientes[] @relation("ProdutoToProdutosClientes")
+}
+
+model Servico {
+  id        Int                @id @default(autoincrement())
+  nome      String
+  descricao String
+  preco     Float
+  clientes  ServicosClientes[] @relation("ServicoToServicosClientes")
+}
+
+model ProdutosClientes {
+  clienteId Int
+  produtoId Int
+  cliente   Cliente @relation(fields: [clienteId], references: [id], name: "ClienteToProdutosClientes")
+  produto   Produto @relation(fields: [produtoId], references: [id], name: "ProdutoToProdutosClientes")
+
+  @@id([clienteId, produtoId])
+  @@map("produtos_clientes")
+}
+
+model ServicosClientes {
+  clienteId Int
+  servicoId Int
+  cliente   Cliente @relation(fields: [clienteId], references: [id], name: "ClienteToServicosClientes")
+  servico   Servico @relation(fields: [servicoId], references: [id], name: "ServicoToServicosClientes")
+
+  @@id([clienteId, servicoId])
+  @@map("servicos_clientes")
+}
