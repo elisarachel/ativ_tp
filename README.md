@@ -3,11 +3,15 @@
 ```
 git clone https://github.com/elisarachel/atv_tp.git
 ```
-### 2. Entre na pasta out
+### 2. Entre na branch da atividade I
+```
+git checkout atvi
+```
+### 3. Entre na pasta out
 ```
 cd out
 ```
-### 3. Rode o arquivo ```main.js```
+### 4. Rode o arquivo ```main.js```
 ```
 node main.js
 ```
