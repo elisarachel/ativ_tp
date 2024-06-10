@@ -23,6 +23,8 @@ while (execucao) {
 	console.log(`9 - Listar os produtos/serviços mais consumidos por gênero`);
 	console.log(`10 - Listar todos os produtos/serviços`);
 	console.log(`11 - Listar os produtos/serviços mais consumidos`);
+	console.log(`12 - Associar produto a cliente`);
+    console.log(`13 - Associar serviço a cliente`);
     console.log(`0 - Sair`);
 
     let entrada = new Entrada();
@@ -30,7 +32,7 @@ while (execucao) {
 
     switch (opcao) {
         case 1:
-            let cadastro = new CadastroCliente(empresa.getClientes);
+            let cadastro = new CadastroCliente(empresa.getClientes, empresa.getProdutos, empresa.getServicos);
             cadastro.cadastrar();
             break;
 		case 2:
@@ -72,6 +74,14 @@ while (execucao) {
 		case 11:
 			let listagemTopProdutosServicos = new ListagemProdutosServicos(empresa.getServicos, empresa.getProdutos);
             listagemTopProdutosServicos.listarMaisConsumidos();
+			break;
+		case 12:
+			let associarProduto = new CadastroCliente(empresa.getClientes, empresa.getProdutos, empresa.getServicos);
+			associarProduto.associarProdutoACliente();
+			break;
+		case 13:
+			let associarServico = new CadastroCliente(empresa.getClientes, empresa.getProdutos, empresa.getServicos);
+			associarServico.associarServicoACliente();
 			break;
         case 0:
             execucao = false
