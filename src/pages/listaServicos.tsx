@@ -1,8 +1,7 @@
 import React from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Typography, List, ListItem, ListItemText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { withTheme } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+import { withTheme, Theme } from '@mui/material/styles';
 
 export interface Servico {
     nome: string;
@@ -130,6 +129,6 @@ class ListaServicosBase extends React.Component<Props> {
     }
 }
 
-const ListaServicos = withTheme(ListaServicosBase);
+const ListaServicos = ListaServicosBase;
 
 export default ListaServicos;

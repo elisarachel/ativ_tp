@@ -1,8 +1,7 @@
 import React from "react";
 import { Accordion, AccordionSummary, AccordionDetails, Typography, List, ListItem, ListItemText, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { withTheme } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+import { withTheme, Theme } from '@mui/material/styles';
 import { SelectChangeEvent } from '@mui/material';
 
 export interface Produto {
@@ -132,6 +131,6 @@ class ListaProdutosBase extends React.Component<Props> {
 }
 
 
-const ListaProdutos = withTheme(ListaProdutosBase);
+const ListaProdutos = ListaProdutosBase;
 
 export default ListaProdutos;

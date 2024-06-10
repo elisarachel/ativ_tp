@@ -4,8 +4,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Produto } from "./listaProdutos";
 import { Servico } from "./listaServicos";
 import { SelectChangeEvent } from '@mui/material';
-import { withTheme } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+import { withTheme, Theme } from '@mui/material/styles';
 
 type Cliente = {
     nome?: string;
@@ -231,6 +230,6 @@ class ListaClienteBase extends React.Component<{ clientes: any, tema: Theme; }, 
     }
 }
 
-const ListaCliente = withTheme(ListaClienteBase);
+const ListaCliente = ListaClienteBase;
 
 export default ListaCliente;
