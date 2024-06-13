@@ -7,11 +7,15 @@ git clone https://github.com/elisarachel/atv_tp.git
 ```
 git checkout atvi
 ```
-### 3. Entre na pasta out
+### 3. Instale as dependências
+```
+npm install
+```
+### 4. Entre na pasta out
 ```
 cd out
 ```
-### 4. Rode o arquivo ```main.js```
+### 5. Rode o arquivo ```main.js```
 ```
 node main.js
 ```
