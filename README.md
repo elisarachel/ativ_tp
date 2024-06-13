@@ -11,15 +11,19 @@ git checkout atvv
 ```
 npm install
 ```
-### 4. Rode o backend
+### 4. Faça a migration do banco de dados
+```
+npx prisma db push
+```
+### 5. Rode o backend
 ```
 npm run dev
 ```
-### 5. Entre na pasta frontend e instale as dependências
+### 6. Entre na pasta frontend e instale as dependências
 ```
 npm install
 ```
-### 6. Execute o frontend
+### 7. Execute o frontend
 ```
 npm start
 ```
