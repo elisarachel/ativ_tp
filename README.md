@@ -9,7 +9,11 @@ git clone https://github.com/elisarachel/atv_tp.git
 ```
 git checkout atvii
 ```
-### 3. Execute a aplicação
+### 3. Instale as dependências
+```
+npm install
+```
+### 4. Execute a aplicação
 ```
 npm start
 ```
